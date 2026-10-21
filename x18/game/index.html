@@ -92,6 +92,14 @@ body {
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+<script>/* v0.4.5 crash guard: if the Godot runtime aborts or WebGL is lost, show a clear reload prompt (never a silent black canvas) and log why */
+(function(){ var shown=false; function show(why){ console.error("MC_CRASH "+why); if(shown) return; shown=true; var d=document.createElement("div"); d.id="mc-crash"; d.style.cssText="position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.85);color:#fff;font:20px sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center"; d.innerHTML="<div style='font-size:30px;font-weight:bold'>The game stopped</div><div style='opacity:.75;max-width:70%;font-size:14px'></div><button style='font-size:20px;padding:10px 26px;cursor:pointer'>Reload</button>"; d.children[1].textContent=String(why).slice(0,300); d.querySelector("button").onclick=function(){location.reload();}; (document.body||document.documentElement).appendChild(d); }
+window.__mcCrash=show; document.addEventListener("fullscreenchange",function(){ try{ if(document.fullscreenElement&&navigator.keyboard&&navigator.keyboard.lock) navigator.keyboard.lock(); }catch(_){} });
+window.addEventListener("error",function(e){ var m=String(e.message||e.error||""); if(/Aborted|RuntimeError|out of memory|memory access|unreachable|Cannot enlarge/i.test(m)) show(m); });
+window.addEventListener("unhandledrejection",function(e){ var m=String(e.reason&&(e.reason.message||e.reason)); if(/Aborted|RuntimeError|out of memory|memory access|unreachable|Cannot enlarge/i.test(m)) show(m); });
+document.addEventListener("DOMContentLoaded",function(){ var c=document.querySelector("canvas"); if(c) c.addEventListener("webglcontextlost",function(ev){ show("WebGL context lost (GPU reset / out of video memory)"); },false); });
+var oe=console.error; console.error=function(){ try{ var m=Array.prototype.join.call(arguments," "); if(!/^MC_CRASH/.test(m) && /^(Aborted|RuntimeError)|Aborted[(]|memory access out of bounds|Out of memory/i.test(m)) show(m); }catch(_){} return oe.apply(console,arguments); };
+})();</script>
 <meta name="robots" content="noindex,nofollow">
 <script>/* v0.4.3 18+ gate: confirmed on ../index.html */ (function(){ var q=location.search; if(!/netbot=|webtest=/.test(q) && localStorage.getItem("mc18ok")!=="1") location.replace("../"+(q||"")); })();</script>
 <style>body{background:#111;} #mc-hint{position:fixed;left:8px;bottom:6px;color:#9ab;font:12px sans-serif;z-index:9;pointer-events:none}</style>
@@ -124,7 +132,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":53079124,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":53089436,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
