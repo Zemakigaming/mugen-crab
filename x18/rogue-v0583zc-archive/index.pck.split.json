@@ -1,0 +1,27 @@
+{
+ "file": "index.pck",
+ "size": 152841688,
+ "md5": "c1396032f60a543652375e9539e063aa",
+ "parts": [
+  {
+   "name": "index.pck.c1396032f6.part0",
+   "size": 41943040,
+   "md5": "d6f34fbd0ca1134176a6a79d2af09b46"
+  },
+  {
+   "name": "index.pck.c1396032f6.part1",
+   "size": 41943040,
+   "md5": "d310b60a0a4af36ab3e91cd7177f8914"
+  },
+  {
+   "name": "index.pck.c1396032f6.part2",
+   "size": 41943040,
+   "md5": "1f0cdcda58462e377091a29431c5bfe8"
+  },
+  {
+   "name": "index.pck.c1396032f6.part3",
+   "size": 27012568,
+   "md5": "2b65b45acbd9f778b74d441979b728bd"
+  }
+ ]
+}
