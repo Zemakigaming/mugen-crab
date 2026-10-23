@@ -1,0 +1,22 @@
+{
+ "file": "index.pck",
+ "size": 104890908,
+ "md5": "d18658de8d27e74f4c2d31a96377cc0d",
+ "parts": [
+  {
+   "name": "index.pck.d18658de8d.part0",
+   "size": 41943040,
+   "md5": "5c5329a4b126438ebe5c00cda438acd3"
+  },
+  {
+   "name": "index.pck.d18658de8d.part1",
+   "size": 41943040,
+   "md5": "66c58e5613f09e888f5c119b1a7dbac9"
+  },
+  {
+   "name": "index.pck.d18658de8d.part2",
+   "size": 21004828,
+   "md5": "2f3cfd013971dd7ff13fcfac76eb7a74"
+  }
+ ]
+}
