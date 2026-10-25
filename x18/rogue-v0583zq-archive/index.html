@@ -130,20 +130,29 @@ var oe=console.error; console.error=function(){ try{ var m=Array.prototype.join.
 			<div id="status-notice"></div>
 		</div>
 
-		<script>/* MC_SPLIT: big files are served as version-stamped parts (GitHub 100 MB limit); stream them back as one file */
-(function(){var M={"index.pck": {"file": "index.pck", "size": 307500936, "parts": [{"name": "index.pck.84909c73cc.part0"}, {"name": "index.pck.84909c73cc.part1"}, {"name": "index.pck.84909c73cc.part2"}, {"name": "index.pck.84909c73cc.part3"}, {"name": "index.pck.84909c73cc.part4"}, {"name": "index.pck.84909c73cc.part5"}, {"name": "index.pck.84909c73cc.part6"}, {"name": "index.pck.84909c73cc.part7"}]}};var of=window.fetch.bind(window);
+		<script>/* MC_SPLIT 3zq: big files are served as content-addressed parts (name = md5 of the part). Parts are kept
+in the Cache API, so a new version only downloads the parts whose bytes changed. Overlay: MB downloaded / total (cached). */
+(function(){var M={"index.pck": {"file": "index.pck", "size": 122734924, "parts": [{"name": "index.pck.004b57059f36da94.p"}, {"name": "index.pck.c9779bb1393c5326.p"}, {"name": "index.pck.9aa611a4ebccc37a.p"}, {"name": "index.pck.fa095c9b2445ea89.p"}, {"name": "index.pck.1cdaac3672037acb.p"}, {"name": "index.pck.30c1150cac9e9ff1.p"}, {"name": "index.pck.836a104f3cdc8fe9.p"}, {"name": "index.pck.c86e531e90f704a4.p"}, {"name": "index.pck.50ae67ca0f13cfa6.p"}, {"name": "index.pck.a4ee97e279dbc1f6.p"}, {"name": "index.pck.ef9e51dd355effad.p"}, {"name": "index.pck.6204697863075774.p"}, {"name": "index.pck.3f0a84685001e77e.p"}, {"name": "index.pck.40fb1f4d556d11bc.p"}, {"name": "index.pck.15276c7a696c05fc.p"}]}, "index.wasm": {"file": "index.wasm", "size": 39514754, "parts": [{"name": "index.wasm.e9fd7c8292f59fde.p"}, {"name": "index.wasm.7e687d8ca261246f.p"}, {"name": "index.wasm.a4e4999b0be6088c.p"}, {"name": "index.wasm.b02952054707e822.p"}, {"name": "index.wasm.7bd9a597a13e1de3.p"}]}};var of=window.fetch.bind(window);var CN='mc-parts-v1';var cp=('caches' in window)?caches.open(CN).catch(function(){return null;}):Promise.resolve(null);
+var tot=0,net=0,hit=0,done=0,ov=null;for(var k in M)tot+=M[k].size;
+function mb(x){return (x/1048576).toFixed(1);}
+function show(){try{if(!ov){ov=document.createElement('div');ov.id='mc-dl';ov.style.cssText='position:fixed;left:0;right:0;bottom:8px;text-align:center;color:#fff;font:14px sans-serif;text-shadow:0 0 3px #000;z-index:99;pointer-events:none';document.body.appendChild(ov);}
+ov.textContent='ดาวน์โหลด '+mb(done)+' / '+mb(tot)+' MB'+(hit?'  (จากแคช '+mb(hit)+' MB)':'');if(done>=tot)setTimeout(function(){if(ov)ov.remove();},1500);}catch(e){}}
 function key(u){try{var s=String(u&&u.url||u);s=s.split('?')[0].split('#')[0];return s.substring(s.lastIndexOf('/')+1);}catch(e){return '';}}
-function part(n,t){return of(n,{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error('part '+n+' HTTP '+r.status);return r;}).catch(function(e){if(t<3)return new Promise(function(z){setTimeout(z,800*(t+1));}).then(function(){return part(n,t+1);});throw e;});}
-window.fetch=function(u,o){var m=M[key(u)];if(!m)return of(u,o);var i=0,rd=null,got=0;
-var st=new ReadableStream({pull:function(c){function next(){if(rd)return rd.read().then(function(x){if(x.done){rd=null;return next();}got+=x.value.byteLength;c.enqueue(x.value);});
-if(i>=m.parts.length){if(got!==m.size)c.error(new Error('size mismatch '+got+'/'+m.size));else c.close();return;}
-return part(m.parts[i++].name,0).then(function(r){rd=r.body.getReader();return next();});}
+function netpart(n,t){return of(n,{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error('part '+n+' HTTP '+r.status);return r;}).catch(function(e){if(t<3)return new Promise(function(z){setTimeout(z,800*(t+1));}).then(function(){return netpart(n,t+1);});throw e;});}
+function part(p){return cp.then(function(c){if(!c)return netpart(p.name,0).then(function(r){return [r,0];});
+return c.match(p.name).then(function(h){if(h)return [h,1];return netpart(p.name,0).then(function(r){return r.blob().then(function(b){var r2=new Response(b);return c.put(p.name,r2.clone()).catch(function(){}).then(function(){return [r2,0];});});});});});}
+function prune(){cp.then(function(c){if(!c)return;var keep={};for(var k in M)M[k].parts.forEach(function(p){keep[p.name]=1;});c.keys().then(function(ks){ks.forEach(function(rq){if(!keep[key(rq)])c.delete(rq);});});}).catch(function(){});}
+window.MC_DL=function(){return {total:tot,net:net,cached:hit,done:done};};
+window.fetch=function(u,o){var m=M[key(u)];if(!m)return of(u,o);var i=0,rd=null,got=0,src=0;
+var st=new ReadableStream({pull:function(c){function next(){if(rd)return rd.read().then(function(x){if(x.done){rd=null;return next();}var n=x.value.byteLength;got+=n;done+=n;if(src)hit+=n;else net+=n;show();c.enqueue(x.value);});
+if(i>=m.parts.length){if(got!==m.size)c.error(new Error('size mismatch '+got+'/'+m.size));else{c.close();console.log('MC_DL '+JSON.stringify(window.MC_DL()));prune();}return;}
+return part(m.parts[i++]).then(function(a){src=a[1];rd=a[0].body.getReader();return next();});}
 return next();}});
 return Promise.resolve(new Response(st,{status:200,headers:{'Content-Type':m.file.slice(-5)==='.wasm'?'application/wasm':'application/octet-stream','Content-Length':String(m.size)}}));};
 })();</script>
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":307500936,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":122734924,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
