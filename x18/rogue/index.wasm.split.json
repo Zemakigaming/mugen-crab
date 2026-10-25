@@ -1,0 +1,32 @@
+{
+ "file": "index.wasm",
+ "size": 39514754,
+ "md5": "83e2f97ab834d857572e3da40d56e70d",
+ "parts": [
+  {
+   "name": "index.wasm.e9fd7c8292f59fde.p",
+   "size": 8388608,
+   "md5": "e9fd7c8292f59fde243fd2864e9940c4"
+  },
+  {
+   "name": "index.wasm.7e687d8ca261246f.p",
+   "size": 8388608,
+   "md5": "7e687d8ca261246f2f3584731270ad3b"
+  },
+  {
+   "name": "index.wasm.a4e4999b0be6088c.p",
+   "size": 8388608,
+   "md5": "a4e4999b0be6088cea4f511bdc808224"
+  },
+  {
+   "name": "index.wasm.b02952054707e822.p",
+   "size": 8388608,
+   "md5": "b02952054707e822b6f35d962007c9dc"
+  },
+  {
+   "name": "index.wasm.7bd9a597a13e1de3.p",
+   "size": 5960322,
+   "md5": "7bd9a597a13e1de39ce0e7436f81e630"
+  }
+ ]
+}
